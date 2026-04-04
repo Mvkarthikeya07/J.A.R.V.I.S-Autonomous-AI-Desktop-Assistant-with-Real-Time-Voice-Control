@@ -610,6 +610,92 @@ class DeviceController:
 
         return f"Closed {', '.join(set(killed))}"
 
+    def close_everything(self) -> str:
+        """
+        Close ALL open windows, tabs, folders and user-launched apps.
+        Uses taskkill /F for browsers and psutil for everything else.
+        Keeps essential system processes alive.
+        """
+        closed = []
+
+        # Processes that must NEVER be killed (system + Jarvis itself)
+        KEEP = {
+            "explorer", "taskmgr", "searchhost", "startmenuexperiencehost",
+            "shellexperiencehost", "runtimebroker", "svchost", "csrss",
+            "winlogon", "lsass", "services", "system", "smss", "fontdrvhost",
+            "dwm", "ctfmon", "sihost", "taskhostw", "spoolsv", "wininit",
+            "registry", "memory compression", "secure system",
+            "antimalware service executable", "windows defender",
+            "python", "pythonw", "python3",   # keep Jarvis alive
+        }
+
+        # ── 1. Force-kill browsers with taskkill (most reliable) ─────────────
+        BROWSERS = ["chrome.exe", "msedge.exe", "firefox.exe", "brave.exe", "opera.exe"]
+        for b in BROWSERS:
+            r = subprocess.run(f"taskkill /F /IM {b}", shell=True,
+                               capture_output=True, text=True)
+            if "SUCCESS" in r.stdout or "terminated" in r.stdout.lower():
+                closed.append(b.replace(".exe",""))
+                log.info(f"  [CLOSE ALL] killed {b}")
+
+        # ── 2. Close all File Explorer / folder windows ───────────────────────
+        subprocess.run(
+            ["powershell", "-NoProfile", "-Command",
+             "(New-Object -ComObject Shell.Application).Windows() | ForEach-Object { $_.Quit() }"],
+            capture_output=True)
+        closed.append("File Explorer")
+
+        # ── 3. Kill every user-launched app that has a visible window ─────────
+        if PSUTIL:
+            for proc in psutil.process_iter(["name", "pid", "status"]):
+                try:
+                    pname = proc.info["name"].lower().replace(".exe", "").strip()
+
+                    # Skip protected system processes
+                    if pname in KEEP:
+                        continue
+                    # Skip processes that are already dead
+                    if not proc.is_running():
+                        continue
+                    # Skip processes with no PID or PID 0/4 (System/Idle)
+                    if proc.pid in (0, 4):
+                        continue
+
+                    # Check if process has a visible window title
+                    r = subprocess.run(
+                        ["powershell", "-NoProfile", "-Command",
+                         f"(Get-Process -Id {proc.pid} -ErrorAction SilentlyContinue).MainWindowTitle"],
+                        capture_output=True, text=True, timeout=2)
+                    title = r.stdout.strip()
+
+                    if title:  # has a visible window → kill it
+                        proc.kill()
+                        closed.append(pname)
+                        log.info(f"  [CLOSE ALL] killed '{pname}' (window: {title[:40]})")
+
+                except (psutil.NoSuchProcess, psutil.AccessDenied,
+                        subprocess.TimeoutExpired, Exception):
+                    pass
+
+        # ── 4. Taskkill any remaining common apps even without visible windows ─
+        EXTRA_KILL = [
+            "notepad.exe", "notepad++.exe", "wordpad.exe",
+            "winword.exe", "excel.exe", "powerpnt.exe", "outlook.exe", "onenote.exe",
+            "code.exe", "devenv.exe",
+            "slack.exe", "discord.exe", "teams.exe", "zoom.exe", "skype.exe",
+            "spotify.exe", "vlc.exe", "wmplayer.exe",
+            "obs64.exe", "obs32.exe",
+            "telegram.exe", "signal.exe",
+            "steam.exe", "acrobat.exe", "acrord32.exe",
+            "mspaint.exe", "calculator.exe", "thunderbird.exe",
+        ]
+        for exe in EXTRA_KILL:
+            subprocess.run(f"taskkill /F /IM {exe}", shell=True, capture_output=True)
+
+        unique = list(dict.fromkeys(closed))
+        log.info(f"  [CLOSE ALL] total closed: {len(unique)} — {unique}")
+        return f"All clear, sir. Everything has been closed."
+
     # ── Web ───────────────────────────────────────────────────────────────────
     def open_url(self, url: str) -> str:
         if not url.startswith("http"): url = "https://" + url
@@ -1251,7 +1337,67 @@ class AIBrain:
             cmd = " ".join(words[:half])
             log.info(f"CMD deduped → '{cmd}'")
 
-        # ── Pre-AI intercept: close/open commands bypass AI entirely ────────
+        # ── WEAPON UP — open full dev suite + brief time/date/weather report ──
+        if re.search(r'\bweapon(s)?\s*up\b', cmd, re.IGNORECASE):
+            now = datetime.datetime.now()
+            time_str = now.strftime('%I:%M %p')
+            date_str = now.strftime('%A, %B %d %Y')
+
+            self.speaker.say_and_wait(
+                f"Arming your workstation, sir. It is {time_str} on {date_str}. "
+                f"Deploying all systems now.", extra=0.3)
+
+            import webbrowser as _wb
+            _wb.open("https://chat.openai.com");  time.sleep(0.6)
+            _wb.open("https://claude.ai");         time.sleep(0.6)
+            _wb.open("https://github.com");        time.sleep(0.6)
+            self.device.open_app("vs code")
+
+            # Fetch weather from wttr.in (plain text, no API key needed)
+            weather_line = ""
+            try:
+                import urllib.request
+                with urllib.request.urlopen(
+                        "https://wttr.in/Chennai?format=%C+%t+humidity+%h+wind+%w",
+                        timeout=4) as resp:
+                    weather_line = resp.read().decode().strip()
+            except Exception:
+                weather_line = ""
+
+            log.info("  [WEAPON UP] ChatGPT + Claude + GitHub + VSCode launched")
+
+            if weather_line:
+                reply = (f"All weapons deployed, sir. "
+                         f"ChatGPT, Claude, GitHub, and VS Code are ready. "
+                         f"Current weather in Chennai: {weather_line}.")
+            else:
+                reply = ("All weapons deployed, sir. "
+                         "ChatGPT, Claude, GitHub, and VS Code are ready.")
+
+            self.speaker.say(reply)
+            return reply
+
+        # ── OPEN FAVOURITE — Netflix, Amazon Prime, YouTube ──────────────────
+        if re.search(r'\b(open|launch|start)\s+(my\s+)?(favourites?|favorites?)\b', cmd, re.IGNORECASE):
+            self.speaker.say_and_wait("Opening your favourites, sir.", extra=0.2)
+            import webbrowser as _wb
+            _wb.open("https://www.netflix.com");          time.sleep(0.6)
+            _wb.open("https://www.primevideo.com");        time.sleep(0.6)
+            _wb.open("https://www.youtube.com")
+            log.info("  [FAVOURITES] Netflix + Amazon Prime + YouTube opened")
+            reply = "Netflix, Amazon Prime, and YouTube are ready, sir. Enjoy."
+            self.speaker.say(reply)
+            return reply
+        if re.search(r'\b(close|shut|kill)\s+(all|every(thing)?|everything)\b'
+                     r'|\ball\s+(tabs|windows|apps|folders|files|open)\b'
+                     r'|\bclose\s+everything\b|\bshut\s+everything\b'
+                     r'|\bclose\s+all\s*(tabs|windows|apps|folders)?\b',
+                     cmd, re.IGNORECASE):
+            self.speaker.say_and_wait("Closing everything, sir. Stand by.", extra=0.2)
+            result = self.device.close_everything()
+            log.info(f"  [CLOSE ALL] → {result}")
+            self.speaker.say(result)
+            return result
         # Prevents AI from ever misrouting "close X" into [SEARCH:X]
         # Strip filler words from command before matching
         cmd_clean = re.sub(r"\b(please|can you|could you|would you|jarvis)\b", "", cmd, flags=re.IGNORECASE).strip()
