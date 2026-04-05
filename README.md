@@ -356,7 +356,7 @@ The project follows a modular architecture separating AI logic, command executio
 ```
 ```
 🔧 Installation
-git clone https://github.com/your-username/jarvis.git
+git clone https://github.com/Mvkarthikeya07/J.A.R.V.I.S-Autonomous-AI-Desktop-Assistant-with-Real-Time-Voice-Control
 cd jarvis
 pip install -r requirements.txt
 Configure Microphone
