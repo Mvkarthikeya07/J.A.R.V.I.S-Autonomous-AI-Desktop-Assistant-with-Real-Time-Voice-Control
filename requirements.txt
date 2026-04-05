@@ -1,8 +1,15 @@
 # ╔══════════════════════════════════════════════════════════════╗
 # ║         J.A.R.V.I.S — requirements.txt                      ║
-# ║         Compatible with Python 3.12+                        ║
-# ║         Install:  pip install -r requirements.txt           ║
-# ║         NOTE: Run terminal as ADMINISTRATOR (Windows)        ║
+# ║         Compatible with Python 3.12+ on Windows             ║
+# ║                                                              ║
+# ║  STEP 1 — Install PyAudio manually (can't pip install it):  ║
+# ║    pip install pipwin                                        ║
+# ║    pipwin install pyaudio                                    ║
+# ║                                                              ║
+# ║  STEP 2 — Install everything else:                          ║
+# ║    pip install -r requirements.txt                          ║
+# ║                                                              ║
+# ║  NOTE: Run terminal as ADMINISTRATOR                         ║
 # ╚══════════════════════════════════════════════════════════════╝
 
 # FIXED for Python 3.12+ - Compatible versions
@@ -20,29 +27,3 @@ sounddevice==0.4.6
 soundfile==0.12.1
 psutil==5.9.6
 
-# ── AI Brain ──────────────────────────────────────────────────
-anthropic==0.49.0
-
-# ── Speech & Audio ────────────────────────────────────────────
-SpeechRecognition==3.10.0
-pyttsx3==2.90
-pyaudio==0.2.11
-numpy==1.26.4
-sounddevice==0.4.6
-soundfile==0.12.1
-
-# ── GUI ───────────────────────────────────────────────────────
-customtkinter==5.2.2
-Pillow==10.1.0
-
-# ── Keyboard & Mouse Automation ───────────────────────────────
-keyboard==0.13.5
-pyautogui==0.9.54
-
-# ── System / Process Control ──────────────────────────────────
-psutil==5.9.6
-pywin32==306
-
-# ── Browser Automation (optional) ─────────────────────────────
-selenium==4.15.2
-webdriver-manager==4.0.1 
