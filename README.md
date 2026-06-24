@@ -29,15 +29,17 @@
 
 ---
 
-🏆 Hackathon Recognition
+## 🏆 Hackathon Recognition
 
 <div align="center">
-Show Image
-Show Image
-Show Image
+
+[![Hackathon](https://img.shields.io/badge/OSC%20AI%20Build%201.0-Shortlisted-00D4FF?style=for-the-badge&logo=trophy&logoColor=white)](https://hackculture.io)
+[![Idea Submission](https://img.shields.io/badge/Idea%20Submission-Cleared-4CAF50?style=for-the-badge)](https://hackculture.io)
+[![Build Phase](https://img.shields.io/badge/Build%20Phase-Cleared-4CAF50?style=for-the-badge)](https://hackculture.io)
 
 </div>
-J.A.R.V.I.S wasn't just built in isolation — it was forged and battle-tested at OSC AI Build 1.0, a national-level, elimination-format hackathon hosted by Open Source Connect on the HackCulture platform. While most submissions get filtered out at the very first checkpoint, JARVIS didn't just survive — it dominated every elimination round, standing tall among the shortlisted few.
+
+**J.A.R.V.I.S** wasn't just built in isolation — it was forged and battle-tested at **OSC AI Build 1.0**, a national-level, elimination-format hackathon hosted by **Open Source Connect** on the **HackCulture** platform. While most submissions get filtered out at the very first checkpoint, JARVIS didn't just survive — it dominated **every elimination round**, standing tall among the shortlisted few.
 
 RoundResultSubmitted🧠 Idea Submission (Elimination)✅ ShortlistedMay 20, 2026⚙️ Build Phase (Elimination)✅ ShortlistedJun 12, 2026
 
