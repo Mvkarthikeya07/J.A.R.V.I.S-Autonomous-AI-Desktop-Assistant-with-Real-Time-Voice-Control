@@ -29,6 +29,25 @@
 
 ---
 
+🏆 Hackathon Recognition
+
+<div align="center">
+Show Image
+Show Image
+Show Image
+
+</div>
+J.A.R.V.I.S wasn't just built in isolation — it was forged and battle-tested at OSC AI Build 1.0, a national-level, elimination-format hackathon hosted by Open Source Connect on the HackCulture platform. While most submissions get filtered out at the very first checkpoint, JARVIS didn't just survive — it dominated every elimination round, standing tall among the shortlisted few.
+
+RoundResultSubmitted🧠 Idea Submission (Elimination)✅ ShortlistedMay 20, 2026⚙️ Build Phase (Elimination)✅ ShortlistedJun 12, 2026
+
+
+Competing in the AI/ML Track under the Problem Statement "AI for Builders", JARVIS was independently evaluated and selected as a standout submission across both elimination checkpoints — a direct validation of its architecture, ambition, and real-world execution under competitive scrutiny.
+
+
+
+📁 Complete hackathon documentation, submission proofs, and supporting material: Google Drive Link https://drive.google.com/drive/folders/1fAXfUpbQa25qnr4UUQf6Zw6SoCMLfUiT?usp=drive_link
+
 ## 📌 Table of Contents
 
 - [Overview](#-overview)
