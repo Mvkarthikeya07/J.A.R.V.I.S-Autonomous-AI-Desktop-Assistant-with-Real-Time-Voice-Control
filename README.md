@@ -2,7 +2,7 @@
 
 <img src="https://img.shields.io/badge/J.A.R.V.I.S-Autonomous%20AI%20Desktop%20Assistant-00D4FF?style=for-the-badge&logo=robot&logoColor=white" />
 
-# 🤖 J.A.R.V.I.S
+# 🤖 J.A.R.V.I.S Autonomous AI Desktop Assistant with Real Time Voice Control
 ### *Just A Rather Very Intelligent System*
 
 **Autonomous AI Desktop Assistant with Real-Time Voice Control**
